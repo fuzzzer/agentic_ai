@@ -1,9 +1,11 @@
 import json
 import logging
 import httpx
-from agent.description import TOOLS_DESCRIPTION
-from agent.tool_manager import execute_tool
+from agent.components.description import TOOLS_DESCRIPTION
+from agent.components.tool_manager import execute_tool
 from core.config import API_BASE_URL, API_KEY, MODEL_NAME
+
+#NOT BEING ACTIVELY MAINTAINED
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)

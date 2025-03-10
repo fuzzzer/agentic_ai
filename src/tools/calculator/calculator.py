@@ -1,12 +1,15 @@
 import json
 import ast
+import re
 
 def calculate(expression):
     try:
+        expression = re.sub(r'(\d+)\s*\^\s*(\d+)', r'\1**\2', expression)
+        
         node = ast.parse(expression, mode='eval')
         allowed_nodes = {
             ast.Expression, ast.BinOp, ast.UnaryOp,
-            ast.Add, ast.Sub, ast.Mult, ast.Div,
+            ast.Add, ast.Sub, ast.Mult, ast.Div, ast.Pow,
             ast.Constant  #(replaces ast.Num in newer Python versions)
         }
 
