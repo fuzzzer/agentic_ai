@@ -1,6 +1,6 @@
 API_BASE_URL = "http://127.0.0.1:1234/v1"
 API_KEY = "lm-studio"
-MODEL_NAME = "qwen2.5-7b-instruct-1m"
+MODEL_NAME = "dolphin3.0-qwen2.5-3b"
 DEFAULT_USER_ROLE = "basic"
 ADMIN_USER_ROLE = "admin"
 

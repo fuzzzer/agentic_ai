@@ -1,7 +1,6 @@
 
 import logging
 import sys
-from agent.agent_http_service import AgentHttpService
 from agent.agent_openai_service import AgentOpenAIService
 from core.config import ADMIN_USER_ROLE, DEFAULT_USER_ROLE
 
@@ -17,11 +16,10 @@ user_role = ADMIN_USER_ROLE if len(sys.argv) > 1 and sys.argv[1] == ADMIN_USER_R
 
 if __name__ == "__main__":
     agent_openai_service = AgentOpenAIService()
-    agent_http_service = AgentHttpService()
     while True:
         user_input = input("You: ")
         if user_input.lower() in ["exit", "quit"]:
             break
-        print(agent_http_service.chat_with_model(user_input, user_role))
+        print(agent_openai_service.chat_with_model(user_input, user_role))
 
 
