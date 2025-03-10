@@ -1,5 +1,5 @@
 TOOLS_DESCRIPTION = """
-You are an AI assistant with access to these tools, so use tools when you can:
+You have access to these tools, so you can use them to get exact answers:
 
 1. **Calculator**  
    - Performs basic math calculations.  
