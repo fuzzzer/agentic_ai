@@ -41,7 +41,7 @@ if __name__ == "__main__":
     
     # Use relative path from script's directory
     lib_folder = os.path.join(script_dir, '../src')
-    output_txt_file = os.path.join(script_dir, 'outputs/dproject.txt')
+    output_txt_file = os.path.join(script_dir, 'outputs/project.txt')
 
     # Collect all .py file contents and write them to the output file
     collect_python_files_content(lib_folder, output_txt_file)
