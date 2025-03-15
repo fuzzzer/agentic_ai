@@ -1,6 +1,6 @@
 import os
 
-def collect_dart_files_content(directory, output_file):
+def collect_python_files_content(directory, output_file):
     # Check if the input directory exists
     if not os.path.exists(directory):
         print(f"Error: Directory '{directory}' does not exist.")
@@ -13,7 +13,7 @@ def collect_dart_files_content(directory, output_file):
 
     # Open the output file in write mode
     with open(output_file, 'w', encoding='utf-8') as outfile:
-        file_count = 0  # Track how many .dart files we find
+        file_count = 0  # Track how many .py files we find
         # Walk through the directory recursively
         for root, dirs, files in os.walk(directory):
             print(f"Entering directory: {root}")  # Debug: print each directory entered
@@ -22,16 +22,16 @@ def collect_dart_files_content(directory, output_file):
                     file_count += 1
                     # Get the full file path
                     file_path = os.path.join(root, file)
-                    print(f"Found Dart file: {file_path}")  # Debug: print each .dart file found
-                    # Read the content of the dart file and write it to the output file
-                    with open(file_path, 'r', encoding='utf-8') as dart_file:
-                        content = dart_file.read()
+                    print(f"Found python file: {file_path}")  # Debug: print each .py file found
+                    # Read the content of the python file and write it to the output file
+                    with open(file_path, 'r', encoding='utf-8') as python_file:
+                        content = python_file.read()
                         outfile.write(content)
                         outfile.write("\n\n")  # Add spacing between files
         
         # Summary of the process
         if file_count == 0:
-            print("No .dart files found.")
+            print("No .py files found.")
         else:
             print(f"Successfully processed {file_count} .py files.")
 
@@ -41,7 +41,7 @@ if __name__ == "__main__":
     
     # Use relative path from script's directory
     lib_folder = os.path.join(script_dir, '../src')
-    output_txt_file = os.path.join(script_dir, 'outputs/project.txt')
+    output_txt_file = os.path.join(script_dir, 'outputs/dproject.txt')
 
-    # Collect all .dart file contents and write them to the output file
-    collect_dart_files_content(lib_folder, output_txt_file)
+    # Collect all .py file contents and write them to the output file
+    collect_python_files_content(lib_folder, output_txt_file)
