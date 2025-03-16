@@ -14,7 +14,7 @@ class AgentOpenAIService(AgentService):
     def __init__(self, api_base_url=API_BASE_URL, api_key=API_KEY, model_name=MODEL_NAME, tools_description=TOOLS_DESCRIPTION):
         super().__init__(model_name=model_name, tools_description=tools_description)
         self.client = OpenAI(base_url=api_base_url, api_key=api_key)
-        logger.info("Initialized AgentOpenAIService with model: %s", self.model_name)
+        logger.info("nLOG: Initialized AgentOpenAIService with model: %s", self.model_name)
 
     def _prepare_request(self):
         """
@@ -37,8 +37,8 @@ class AgentOpenAIService(AgentService):
                 stream=True
             )
         except Exception as e:
-            logger.error("Error during chat completion creation: %s", e)
-            print(" (Error fetching model output) ")
+            logger.error("nLOG: Error during chat completion creation: %s", e)
+            print(" (Error fetching model output) ", e)
             return "(Model Error)", None
 
         for chunk in response:

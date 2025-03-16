@@ -1,4 +1,3 @@
-import logging
 from venv import logger
 import anthropic
 
@@ -10,7 +9,7 @@ class AgentAnthropicService(AgentService):
     def __init__(self, api_key=API_KEY, model_name=MODEL_NAME, tools_description=TOOLS_DESCRIPTION):
         super().__init__(model_name=model_name, tools_description=tools_description)
         self.client = anthropic.Anthropic(api_key=api_key)
-        logger.info("Initialized AgentAnthropicService with model: %s", self.model_name)
+        logger.info("\nLOG: Initialized AgentAnthropicService with model: %s", self.model_name)
 
     def _prepare_request(self):
         role_prefix = {
@@ -50,7 +49,7 @@ class AgentAnthropicService(AgentService):
                 stop_sequences=stop_sequences
             )
         except Exception as e:
-            logger.error("Error during chat completion creation: %s", e)
+            logger.error("\nLOG: Error during chat completion creation: %s", e)
             print(" (Error fetching model output) ")
             return "(Model Error)", None
 

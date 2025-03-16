@@ -1,19 +1,20 @@
 import os
 
 
-API_BASE_URL = "http://127.0.0.1:1234/v1"
+# API_BASE_URL = "http://127.0.0.1:1234/v1"
+API_BASE_URL = "http://host.docker.internal:1234/v1"
 API_KEY = "lm-studio"
 MODEL_NAME = "dolphin3.0-qwen2.5-3b"
 DEFAULT_USER_ROLE = "basic"
 ADMIN_USER_ROLE = "admin"
 
-## Be very careful when we permit ai to do some changes or run some commands in some directory
+## Unless running in containerized enviroment, Be very careful when we permit ai to do some changes or run some commands in some directory, unless 
 PERMITTED_OS_DIRECTORIES = [
-    os.path.expanduser("~/programming/AI_tools/agentic_ai")  
+    '/'
 ]
 
 ALLOWED_OS_COMMANDS = [
-    "ls", "pwd", "mkdir", "rmdir", "touch", "cat", "cp", "mv", "echo", "grep",
+    "ls", "pwd", "mkdir", "rmdir", "touch", "cat", "cp", "mv", "echo", "grep", "cd",
     "mason",
     "flutter",
     "dart",
@@ -26,7 +27,7 @@ FORBIDDEN_COMMANDS = [
     "apt", "apt-get", "brew", "yum", "dnf", "pacman", 
     "wget", "curl", "ssh", "scp", "rsync", "ftp", "sftp", "telnet",
     "passwd", "useradd", "userdel", "groupadd", "groupdel",
-    "export", "env", "printenv"
+    "export", "env", "printenv", "pip"
 ]
 
 FORBIDDEN_PATTERNS = [

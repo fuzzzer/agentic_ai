@@ -17,7 +17,7 @@ class AgentHttpService:
         self.api_key = api_key
         self.model_name = model_name
         self.tools_description = tools_description
-        logger.info("Initialized AgentService with model: %s", self.model_name)
+        logger.info("nLOG: Initialized AgentService with model: %s", self.model_name)
 
     def build_payload(self, user_input):
         return {

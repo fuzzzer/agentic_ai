@@ -110,3 +110,5 @@ Thumbs.db
 tmp/
 
 .agentic_ai
+
+scripts/outputs

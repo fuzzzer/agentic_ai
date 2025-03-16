@@ -67,7 +67,7 @@ class AgentService(abc.ABC):
             else:
                 return "Invalid tool command (no 'tool' key)."
         except Exception as e:
-            logger.error("Error processing tool command: %s", e)
+            logger.error("nLOG: Error processing tool command: %s", e)
             return f"Error: {str(e)}"
 
     def _extract_tool_command(self, full_text: str):

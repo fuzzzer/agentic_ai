@@ -1,6 +1,5 @@
 import json
 from core.config import ADMIN_USER_ROLE
-from core.utils.logging import log_tool_request
 from core.utils.validation import is_valid_request
 from tools.tools import ADMIN_TOOL, DEFAULT_TOOLS
 
@@ -13,12 +12,12 @@ def execute_tool(command_map: dict, user_role):
     args = command_map.get("args", None)
     # TODO add argument validation and restriction of arguments with some dangerous phrazes, or allowing only custom arguments
 
-    log_tool_request(tool_name, args)
+    print(f"Tool Used: {tool_name}, Args: {args}")
 
-    if(user_role == ADMIN_USER_ROLE):
+    if user_role == ADMIN_USER_ROLE:
         return execute_admin_tool(tool_name, args)
-    
-    return execute_default_tool(tool_name, args)
+    else:
+        return execute_default_tool(tool_name, args)
 
 
 def execute_admin_tool(tool_name, args):
