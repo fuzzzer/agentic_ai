@@ -1,3 +1,11 @@
+add setup_config.py in src
+
+eg:
+API_BASE_URL = "http://localhost:1234/v1"
+API_KEY = ""
+MODEL_NAME = ""
+REMOTE_MODEL_NAME = ""
+
 ai_agent/
 │── agent.py # The AI interface (interacts with LM Studio)
 │── tool_manager.py # Routes tool requests securely
