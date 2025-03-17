@@ -8,7 +8,7 @@ from venv import logger
 
 from agent.components.description import TOOLS_DESCRIPTION
 from agent.components.tool_manager import execute_tool
-from core.config import MODEL_NAME
+from setup_config import MODEL_NAME
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)

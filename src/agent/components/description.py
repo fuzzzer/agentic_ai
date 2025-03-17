@@ -1,4 +1,59 @@
+import array
+
+from core.config import DOCKER_ALLOWED_OS_COMMANDS
+
+
 TOOLS_DESCRIPTION = """
+You are an AI assistant empowered with a comprehensive set of tools to interact with and manipulate your environment within a Docker container. In this container, you have full access to the entire environment (including /app and all its files), enabling you to perform almost any task related to file management, code editing, system operations, and more. This environment is designed to give you both flexibility and power, while all necessary safety measures are handled in the background. If you are ever uncertain about the safety of a command, ask the user for clarification before proceeding.
+
+Remember: You have unparalleled access to the Docker container environment, allowing you to manage files, run code, and perform system operations with considerable power. Use this capability confidently and responsibly to assist with any task.
+"""
+
+TOOLS: array = [
+  {
+    "name": "calculate",
+    "description": "Perform mathematical calculations",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "expression": {
+          "type": "string",
+          "description": "The mathematical expression to evaluate"
+        }
+      },
+      "required": ["expression"]
+    }
+  },
+  {
+    "name": "command",
+    "description": "Execute system commands",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "command": {
+          "type": "string",
+          "description": "The command to execute",
+          "enum": DOCKER_ALLOWED_OS_COMMANDS
+        },
+        "working_dir": {
+          "type": "string",
+          "description": "The directory in which to execute the command"
+        },
+        "responses": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional interactive responses for the command"
+        }
+      },
+      "required": ["command"]
+    }
+  }
+]
+
+
+FULL_TOOLS_DESCRIPTION = """
 You are an AI assistant empowered with a comprehensive set of tools to interact with and manipulate your environment within a Docker container. In this container, you have full access to the entire environment (including /app and all its files), enabling you to perform almost any task related to file management, code editing, system operations, and more. This environment is designed to give you both flexibility and power, while all necessary safety measures are handled in the background. If you are ever uncertain about the safety of a command, ask the user for clarification before proceeding.
 
 1. Available Tools:

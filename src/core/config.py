@@ -1,11 +1,5 @@
 import os
 
-
-# API_BASE_URL = "http://127.0.0.1:1234/v1"
-API_BASE_URL = "http://host.docker.internal:1234/v1"
-API_KEY = "lm-studio"
-# MODEL_NAME = "dolphin3.0-qwen2.5-3b"
-MODEL_NAME = "dolphin3.0-qwen2.5-3b"
 DEFAULT_USER_ROLE = "basic"
 ADMIN_USER_ROLE = "admin"
 DOCKER_ENV_IDENTIFIER = "docker"

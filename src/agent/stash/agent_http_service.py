@@ -3,7 +3,7 @@ import logging
 import httpx
 from agent.components.description import TOOLS_DESCRIPTION
 from agent.components.tool_manager import execute_tool
-from core.config import API_BASE_URL, API_KEY, MODEL_NAME
+from setup_config import API_BASE_URL, API_KEY, MODEL_NAME
 
 #NOT BEING ACTIVELY MAINTAINED
 

@@ -6,7 +6,7 @@ from venv import logger
 from agent.agent_service import AgentService
 from agent.components.description import TOOLS_DESCRIPTION
 from agent.components.tool_manager import execute_tool
-from core.config import API_BASE_URL, API_KEY, MODEL_NAME
+from setup_config import API_BASE_URL, API_KEY, MODEL_NAME
 
 from openai import OpenAI
 
