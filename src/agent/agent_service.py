@@ -52,6 +52,7 @@ class AgentService(abc.ABC):
             tool_result = self._process_tool_command(tool_command, user_role)
             print(f"\n🔧 Tool Call Detected: {tool_command}")
             print(f"🔧 Tool Result: {tool_result}\n", flush=True)
+            logger.info(f"🔧 Tool Result: {tool_result}\n")
             self.conversation_history.append({"role": "tool", "content": f"Tool result: {tool_result}"})
         return last_answer
 
@@ -73,15 +74,21 @@ class AgentService(abc.ABC):
     def _extract_tool_command(self, full_text: str):
         """
         Extracts a tool command from the provided text if present.
-        Returns a tuple (start_index, tool_command_str) if found, otherwise (None, None).
+        
+        Returns a tuple (final_text, tool_command_str), where:
+        - final_text: The text before the tool command.
+        - tool_command_str: The extracted tool command (or None if not found).
+        
+        This logic assumes that the tool command starts after the START_TOOL_IDENTIFIER.
+        Since Model API stops generation when the END_TOOL_IDENTIFIER is generated,
+        the final prompt should contain text up to but not including that marker.
         """
-        end_idx = full_text.find(self.END_TOOL_IDENTIFIER)
-        if end_idx != -1:
-            start_idx = full_text.rfind(self.START_TOOL_IDENTIFIER, 0, end_idx)
-            if start_idx != -1:
-                tool_command_str = full_text[start_idx + len(self.START_TOOL_IDENTIFIER):end_idx].strip()
-                return start_idx, tool_command_str
-        return None, None
+        if self.START_TOOL_IDENTIFIER in full_text:
+            parts = full_text.split(self.START_TOOL_IDENTIFIER, 1)
+            final_text = parts[0]
+            tool_command_str = parts[1].strip()
+            return final_text, tool_command_str
+        return full_text, None
 
     @abc.abstractmethod
     def _prepare_request(self):

@@ -61,18 +61,6 @@ class AgentAnthropicService(AgentService):
             print(new_text, end="", flush=True)
             full_text += new_text
 
-            # Since the model stops at the end marker, we now check if there's a tool command.
-            # If the start marker exists in full_text, we assume it's a tool call.
-            if self.START_TOOL_IDENTIFIER in full_text:
-                parts = full_text.split(self.START_TOOL_IDENTIFIER, 1)
-                final_text = parts[0]
-                tool_command_str = parts[1].strip()  # may be incomplete if the end marker was not generated
-                # Note: Because stop_sequences stops generation at [[/tool]],
-                # full_text should contain text up to but not including the closing marker.
-                break
-
         print()  # newline after streaming
-        if tool_command_str is not None:
-            return final_text, tool_command_str
-        else:
-            return full_text, None
+        final_text, tool_command_str = self._extract_tool_command(full_text)
+        return final_text, tool_command_str

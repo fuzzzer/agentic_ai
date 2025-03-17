@@ -4,13 +4,58 @@ import os
 # API_BASE_URL = "http://127.0.0.1:1234/v1"
 API_BASE_URL = "http://host.docker.internal:1234/v1"
 API_KEY = "lm-studio"
+# MODEL_NAME = "dolphin3.0-qwen2.5-3b"
 MODEL_NAME = "dolphin3.0-qwen2.5-3b"
 DEFAULT_USER_ROLE = "basic"
 ADMIN_USER_ROLE = "admin"
+DOCKER_ENV_IDENTIFIER = "docker"
 
-## Unless running in containerized enviroment, Be very careful when we permit ai to do some changes or run some commands in some directory, unless 
+## Docker Commands
+DOCKER_PERMITTED_OS_DIRECTORIES =   [
+    "/"  # Full container filesystem access; ensure sensitive host directories are not mounted.
+]
+
+DOCKER_ALLOWED_OS_COMMANDS = [
+    "ls", "pwd", "mkdir", "rmdir", "touch", "cat", "cp", "mv", "echo", "grep", "cd",
+    "bash", "sh", "sed", "awk", "find", "sort", "uniq", "head", "tail",
+    "rm", "chmod", "chown",
+    "kill", "pkill", "dd", "mkfs", "fdisk",
+    "apt", "apt-get", "yum", "dnf", "pacman",
+    "wget", "curl", "ssh", "scp", "rsync", "ftp", "sftp", "telnet",
+    "python", "pip", 
+    # "git", "node", "npm"
+]
+
+DOCKER_FORBIDDEN_COMMANDS = [
+    # Dangerous or privilege-escalating commands
+    "sudo", "su",
+    "reboot", "shutdown", "halt", "poweroff",
+    "init",                                    
+    "mount", "umount",                         
+    "iptables", "systemctl", "service"        
+]
+
+DOCKER_FORBIDDEN_PATTERNS = [
+    # Block dangerous piping to shells.
+    r'\|\s*(?:bash|sh|zsh|ksh|csh|tcsh)',
+    
+    # Block command substitution constructs (e.g. $(...)) or backticks.
+    r'`.*`', r'\$\(.*\)',
+    
+    # Block background execution with certain commands to avoid runaway processes.
+    r'&\s*$', r';\s*(?:sleep|wait)',
+    
+    # Optional: Block external web/network requests if desired.
+    # r'http://', r'https://', r'ftp://', r'ssh://',
+    # r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
+]
+
+
+
+## NON Docker Commands
 PERMITTED_OS_DIRECTORIES = [
-    '/'
+    ## your path, should be explicitely set to double check and assure that user knows what she/he's doing :D
+    '/Users/fuzzzer/programming/AI_tools/agentic_ai/playground'
 ]
 
 ALLOWED_OS_COMMANDS = [

@@ -3,6 +3,8 @@ import os
 import json
 import re
 from typing import Dict, List, Any, Optional
+from core.config import PERMITTED_OS_DIRECTORIES, FORBIDDEN_PATTERNS
+
 
 class FileManager:
     """Handles file operations with strict path validation."""
@@ -190,7 +192,6 @@ class FileManager:
 
 def file_operation(args: Dict[str, Any]) -> str:
     """Tool function to perform file operations with the FileManager."""
-    from core.config import PERMITTED_OS_DIRECTORIES, FORBIDDEN_PATTERNS
     
     if not isinstance(args, dict):
         return json.dumps({"error": "Invalid arguments"})

@@ -34,7 +34,8 @@ class AgentOpenAIService(AgentService):
             response = self.client.chat.completions.create(
                 model=self.model_name,
                 messages=messages,
-                stream=True
+                stream=True,
+                stop=[self.END_TOOL_IDENTIFIER]
             )
         except Exception as e:
             logger.error("nLOG: Error during chat completion creation: %s", e)
@@ -49,12 +50,6 @@ class AgentOpenAIService(AgentService):
             print(new_text, end="", flush=True)
             full_text += new_text
 
-            start_idx, tool_command_str = self._extract_tool_command(full_text)
-            if tool_command_str is not None:
-                break
-
-
         print()  # newline after streaming
-
-        final_text = full_text[:start_idx] if tool_command_str is not None else full_text
+        final_text, tool_command_str = self._extract_tool_command(full_text)
         return final_text, tool_command_str
