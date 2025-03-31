@@ -4,10 +4,15 @@ from core.utils.validation import is_valid_request
 from tools.tools import ADMIN_TOOL, DEFAULT_TOOLS
 
 
-def execute_tool(command_map: dict, user_role):
+def execute_tool(
+    command_map: dict,
+    user_role,
+):
     if not is_valid_request(command_map, user_role):
-        return json.dumps({"error": "Invalid request format or unauthorized tool access."})
-    
+        return json.dumps(
+            {"error": "Invalid request format or unauthorized tool access."}
+        )
+
     tool_name = command_map["tool"]
     args = command_map.get("args", None)
     # TODO add argument validation and restriction of arguments with some dangerous phrazes, or allowing only custom arguments

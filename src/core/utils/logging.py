@@ -14,11 +14,13 @@ COLOR_MAP = {
     "CRITICAL": Fore.RED + Style.BRIGHT,
 }
 
+
 # Custom log formatter with colors
 class ColoredFormatter(logging.Formatter):
     def format(self, record):
         log_color = COLOR_MAP.get(record.levelname, "")
         return f"{Fore.CYAN}{record.asctime}{Style.RESET_ALL} - {log_color}{record.levelname}{Style.RESET_ALL} - {record.message}"
+
 
 # Setup logger inside main
 def setup_logger():
@@ -30,6 +32,6 @@ def setup_logger():
     # Console handler
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setFormatter(formatter)
-    
+
     logger.addHandler(console_handler)
     return logger

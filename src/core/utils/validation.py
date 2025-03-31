@@ -10,7 +10,6 @@ def is_valid_request(request, user_role: str):
         return False
     if "tool" not in request or "args" not in request:
         return False
-    if request["tool"] not in  tools:
+    if request["tool"] not in tools:
         return False
     return True
-

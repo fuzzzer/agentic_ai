@@ -10,39 +10,39 @@ Remember: You have unparalleled access to the Docker container environment, allo
 """
 
 ANTHROPIC_TOOLS: array = [
-  {
-    "name": "calculate",
-    "description": "Perform mathematical calculations",
-    "input_schema": {
-      "type": "object",
-      "properties": {
-        "calculate": {
-          "type": "string",
-          "description": "The mathematical expression to evaluate"
-        }
-      },
-      "required": ["calculate"]
-    }
-  },
-  {
-    "name": "command",
-    "description": "Execute system commands",
-    "input_schema": {
-      "type": "object",
-      "properties": {
-        "command": {
-          "type": "string",
-          "description": "The command to execute",
-          "enum": DOCKER_ALLOWED_OS_COMMANDS
+    {
+        "name": "calculate",
+        "description": "Perform mathematical calculations",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "calculate": {
+                    "type": "string",
+                    "description": "The mathematical expression to evaluate",
+                }
+            },
+            "required": ["calculate"],
         },
-        "working_dir": {
-          "type": "string",
-          "description": "The directory in which to execute the command"
+    },
+    {
+        "name": "command",
+        "description": "Execute system commands",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "command": {
+                    "type": "string",
+                    "description": "The command to execute",
+                    "enum": DOCKER_ALLOWED_OS_COMMANDS,
+                },
+                "working_dir": {
+                    "type": "string",
+                    "description": "The directory in which to execute the command",
+                },
+            },
+            "required": ["command"],
         },
-      },
-      "required": ["command"]
-    }
-  }
+    },
 ]
 
 LM_STUDIO_TOOLS: array = [
@@ -56,12 +56,12 @@ LM_STUDIO_TOOLS: array = [
                 "properties": {
                     "calculate": {
                         "type": "string",
-                        "description": "The mathematical expression to evaluate."
+                        "description": "The mathematical expression to evaluate.",
                     }
                 },
-                "required": ["calculate"]
-            }
-        }
+                "required": ["calculate"],
+            },
+        },
     },
     {
         "type": "function",
@@ -74,13 +74,13 @@ LM_STUDIO_TOOLS: array = [
                     "command": {
                         "type": "string",
                         "description": "The command to execute.",
-                        "enum": DOCKER_ALLOWED_OS_COMMANDS
+                        "enum": DOCKER_ALLOWED_OS_COMMANDS,
                     },
                 },
-                "required": ["command"]
-            }
-        }
-    }
+                "required": ["command"],
+            },
+        },
+    },
 ]
 
 
@@ -257,4 +257,3 @@ So this tool description is always same, the variable you are providing is this 
    ...
 ]
 """
-

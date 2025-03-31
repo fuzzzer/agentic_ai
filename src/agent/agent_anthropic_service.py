@@ -11,11 +11,17 @@ from setup_config import API_KEY, REMOTE_MODEL_NAME
 
 logger = logging.getLogger(__name__)
 
+
 class AgentAnthropicService(AgentService):
-    def __init__(self, api_key=API_KEY, model_name=REMOTE_MODEL_NAME, tools_description=TOOLS_DESCRIPTION):
+    def __init__(
+        self,
+        api_key=API_KEY,
+        model_name=REMOTE_MODEL_NAME,
+        tools_description=TOOLS_DESCRIPTION,
+    ):
         super().__init__(model_name=model_name, tools_description=tools_description)
         self.client = anthropic.Anthropic(api_key=api_key)
-       
+
         self.tools = ANTHROPIC_TOOLS
 
     def _prepare_request(self):
@@ -25,8 +31,12 @@ class AgentAnthropicService(AgentService):
         """
         # Use the system message if available, otherwise fall back to the tools description.
         system_message = next(
-            (msg["content"] for msg in self.conversation_history if msg["role"] == "system"),
-            self.tools_description
+            (
+                msg["content"]
+                for msg in self.conversation_history
+                if msg["role"] == "system"
+            ),
+            self.tools_description,
         )
 
         messages = []
@@ -36,10 +46,7 @@ class AgentAnthropicService(AgentService):
             else:
                 messages.append({"role": msg["role"], "content": msg["content"]})
 
-        request_data = {
-            "system": system_message,
-            "messages": messages
-        }
+        request_data = {"system": system_message, "messages": messages}
         logger.debug(f"Prepared request data: {request_data}")
         return request_data
 
@@ -52,7 +59,7 @@ class AgentAnthropicService(AgentService):
         collecting_tool_use = False
         stop_reason = ""
 
-        print("🤖 Assistant:", end="", flush=True)       
+        print("🤖 Assistant:", end="", flush=True)
 
         try:
             response = self.client.messages.create(
@@ -62,7 +69,7 @@ class AgentAnthropicService(AgentService):
                 max_tokens=30024,
                 temperature=0.7,
                 tools=self.tools,
-                stream=True
+                stream=True,
             )
 
             for chunk in response:
@@ -74,11 +81,11 @@ class AgentAnthropicService(AgentService):
                 if text_chunk:
                     print(text_chunk, end="", flush=True)
                     full_text += text_chunk
-                
+
                 tool_call_chunk = getattr(delta, "partial_json", None)
                 if tool_call_chunk:
                     if not collecting_tool_use:
-                        print() # adding new line before tool use print
+                        print()  # adding new line before tool use print
                         collecting_tool_use = True
                     print(tool_call_chunk, end="", flush=True)
                     full_tool_call_str += tool_call_chunk
@@ -100,18 +107,19 @@ class AgentAnthropicService(AgentService):
                     args = parsed_tool[tool_as_key]
 
                     if tool_as_key == "command":
-                        full_tool_call_str = json.dumps({
-                            "tool": "command",
-                            "args": {
-                                "command": args,
-                                "working_dir": "/app",
+                        full_tool_call_str = json.dumps(
+                            {
+                                "tool": "command",
+                                "args": {
+                                    "command": args,
+                                    "working_dir": "/app",
+                                },
                             }
-                        })
+                        )
                     else:
-                        full_tool_call_str = json.dumps({
-                            "tool": tool_as_key,
-                            "args": args
-                        })
+                        full_tool_call_str = json.dumps(
+                            {"tool": tool_as_key, "args": args}
+                        )
 
                     logger.info(f"Tool detected: {full_tool_call_str}")
                     return full_text, full_tool_call_str
@@ -140,7 +148,9 @@ class AgentAnthropicService(AgentService):
             answer, tool_command = self._stream_until_tool_or_end(request_data)
 
             if answer and answer.strip():
-                self.conversation_history.append({"role": "assistant", "content": answer})
+                self.conversation_history.append(
+                    {"role": "assistant", "content": answer}
+                )
                 last_answer = answer
 
             if not tool_command:
@@ -156,18 +166,16 @@ class AgentAnthropicService(AgentService):
                 print(f"🔧 Tool Result: {sanitized_result}\n", flush=True)
 
                 # Add tool result to conversation history.
-                self.conversation_history.append({
-                    "role": "user",
-                    "content": f"Tool result: {sanitized_result}"
-                })
+                self.conversation_history.append(
+                    {"role": "user", "content": f"Tool result: {sanitized_result}"}
+                )
 
             except Exception as e:
                 error_msg = f"Error processing tool command: {e}"
                 logger.error(error_msg)
-                self.conversation_history.append({
-                    "role": "user",
-                    "content": f"Tool execution error: {error_msg}"
-                })
+                self.conversation_history.append(
+                    {"role": "user", "content": f"Tool execution error: {error_msg}"}
+                )
                 break  # Stop processing on error.
 
         if iterations >= max_iterations:

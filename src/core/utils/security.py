@@ -2,7 +2,7 @@ import os
 import builtins
 
 
-def block_system_commands():    
+def block_system_commands():
     # Disabling system-level commands
     os.remove = None
     os.rmdir = None
@@ -12,4 +12,3 @@ def block_system_commands():
     # Disabling dangerous built-in functions
     builtins.exec = None
     builtins.eval = None
-

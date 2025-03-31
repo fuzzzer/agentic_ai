@@ -2,11 +2,15 @@ from enum import Enum
 import pandas as pd
 import os
 
+
 class ToolCompletionStatus(Enum):
     SUCCESS = 1
     FAILURE = 2
 
-def receit_tracker(entries: list[dict],) -> ToolCompletionStatus:
+
+def receit_tracker(
+    entries: list[dict],
+) -> ToolCompletionStatus:
     try:
         append_entries_to_existing_excel(entries)
         return ToolCompletionStatus.SUCCESS
@@ -46,8 +50,13 @@ def append_entries_to_existing_excel(
         raise FileNotFoundError(f"Excel file not found at {excel_path}")
 
     df_existing = pd.read_excel(excel_path)
-    required_columns = ["Date of Purchase", "Product Category", "Product", "Total Price"]
-    
+    required_columns = [
+        "Date of Purchase",
+        "Product Category",
+        "Product",
+        "Total Price",
+    ]
+
     for col in required_columns:
         if col not in df_existing.columns:
             raise ValueError(f"Expected column '{col}' not found in Excel file.")
@@ -60,20 +69,21 @@ def append_entries_to_existing_excel(
 
     return df_combined
 
+
 # Ex:
 entries = [
     {
         "date_of_purchase": "2025-03-30",
         "product_category": "Beverage",
         "product": "Coffee",
-        "total_price": 4.50
+        "total_price": 4.50,
     },
     {
         "date_of_purchase": "2025-03-30",
         "product_category": "Snack",
         "product": "Chocolate Croissant",
-        "total_price": 2.30
-    }
+        "total_price": 2.30,
+    },
 ]
 
 append_entries_to_existing_excel(entries)

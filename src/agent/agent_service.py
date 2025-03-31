@@ -1,5 +1,3 @@
-
-
 import abc
 import abc
 import json
@@ -20,6 +18,7 @@ class AgentService(abc.ABC):
     Abstract base class that defines the common conversation and tool-calling loop.
     Subclasses must implement the _prepare_request and _stream_until_tool_or_end methods.
     """
+
     START_TOOL_IDENTIFIER = "[[tool]]"
     END_TOOL_IDENTIFIER = "[[/tool]]"
 
@@ -27,7 +26,9 @@ class AgentService(abc.ABC):
         self.model_name = model_name
         self.tools_description = tools_description
         # Conversation history as list of dicts with keys 'role' and 'content'
-        self.conversation_history = [{"role": "system", "content": self.tools_description}]
+        self.conversation_history = [
+            {"role": "system", "content": self.tools_description}
+        ]
         self.client = None  # Must be set by subclass
 
     def chat_with_model(self, user_input: str, user_role: str) -> str:
@@ -44,7 +45,9 @@ class AgentService(abc.ABC):
             request = self._prepare_request()
             answer, tool_command = self._stream_until_tool_or_end(request)
             if answer:
-                self.conversation_history.append({"role": "assistant", "content": answer})
+                self.conversation_history.append(
+                    {"role": "assistant", "content": answer}
+                )
                 last_answer = answer
 
             if tool_command is None:
@@ -54,7 +57,9 @@ class AgentService(abc.ABC):
             print(f"\n🔧 Tool Call Detected: {tool_command}")
             print(f"🔧 Tool Result: {tool_result}\n", flush=True)
             logger.info(f"🔧 Tool Result: {tool_result}\n")
-            self.conversation_history.append({"role": "tool", "content": f"Tool result: {tool_result}"})
+            self.conversation_history.append(
+                {"role": "tool", "content": f"Tool result: {tool_result}"}
+            )
         return last_answer
 
     def _process_tool_command(self, command_str: str, user_role: str):
@@ -75,11 +80,11 @@ class AgentService(abc.ABC):
     def _extract_tool_command(self, full_text: str):
         """
         Extracts a tool command from the provided text if present.
-        
+
         Returns a tuple (final_text, tool_command_str), where:
         - final_text: The text before the tool command.
         - tool_command_str: The extracted tool command (or None if not found).
-        
+
         This logic assumes that the tool command starts after the START_TOOL_IDENTIFIER.
         Since Model API stops generation when the END_TOOL_IDENTIFIER is generated,
         the final prompt should contain text up to but not including that marker.
@@ -90,15 +95,18 @@ class AgentService(abc.ABC):
             tool_command_str = parts[1].strip()
             return final_text, tool_command_str
         return full_text, None
-    
+
     def _sanitize_tool_response(self, response: str) -> str:
         """Sanitize tool response to prevent context overflow."""
         max_length = 5000
         if len(response) > max_length:
-            response = response[:max_length] + f" [Output truncated, total length: {len(response)} characters]"
+            response = (
+                response[:max_length]
+                + f" [Output truncated, total length: {len(response)} characters]"
+            )
         # Remove ANSI escape codes that may cause display issues
-        ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
-        return ansi_escape.sub('', response)
+        ansi_escape = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
+        return ansi_escape.sub("", response)
 
     @abc.abstractmethod
     def _prepare_request(self):
