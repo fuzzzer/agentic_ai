@@ -4,6 +4,7 @@ import abc
 import abc
 import json
 import logging
+import re
 from venv import logger
 
 from agent.components.description import TOOLS_DESCRIPTION
@@ -89,6 +90,15 @@ class AgentService(abc.ABC):
             tool_command_str = parts[1].strip()
             return final_text, tool_command_str
         return full_text, None
+    
+    def _sanitize_tool_response(self, response: str) -> str:
+        """Sanitize tool response to prevent context overflow."""
+        max_length = 5000
+        if len(response) > max_length:
+            response = response[:max_length] + f" [Output truncated, total length: {len(response)} characters]"
+        # Remove ANSI escape codes that may cause display issues
+        ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+        return ansi_escape.sub('', response)
 
     @abc.abstractmethod
     def _prepare_request(self):

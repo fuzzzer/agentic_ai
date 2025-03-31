@@ -9,19 +9,19 @@ You are an AI assistant empowered with a comprehensive set of tools to interact 
 Remember: You have unparalleled access to the Docker container environment, allowing you to manage files, run code, and perform system operations with considerable power. Use this capability confidently and responsibly to assist with any task.
 """
 
-TOOLS: array = [
+ANTHROPIC_TOOLS: array = [
   {
     "name": "calculate",
     "description": "Perform mathematical calculations",
     "input_schema": {
       "type": "object",
       "properties": {
-        "expression": {
+        "calculate": {
           "type": "string",
           "description": "The mathematical expression to evaluate"
         }
       },
-      "required": ["expression"]
+      "required": ["calculate"]
     }
   },
   {
@@ -39,17 +39,48 @@ TOOLS: array = [
           "type": "string",
           "description": "The directory in which to execute the command"
         },
-        "responses": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Optional interactive responses for the command"
-        }
       },
       "required": ["command"]
     }
   }
+]
+
+LM_STUDIO_TOOLS: array = [
+    {
+        "type": "function",
+        "function": {
+            "name": "calculate",
+            "description": "Perform mathematical calculations.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "calculate": {
+                        "type": "string",
+                        "description": "The mathematical expression to evaluate."
+                    }
+                },
+                "required": ["calculate"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "command",
+            "description": "Execute system commands.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "command": {
+                        "type": "string",
+                        "description": "The command to execute.",
+                        "enum": DOCKER_ALLOWED_OS_COMMANDS
+                    },
+                },
+                "required": ["command"]
+            }
+        }
+    }
 ]
 
 
@@ -158,5 +189,72 @@ You are an AI assistant empowered with a comprehensive set of tools to interact 
    - **Do not attempt any dangerous operations.** Even though you have full control over the Docker container environment, dangerous commands could compromise the container. If you are in doubt about a command’s safety, ask the user for confirmation before proceeding.
 
 Remember: You have unparalleled access to the Docker container environment, allowing you to manage files, run code, and perform system operations with considerable power. Use this capability confidently and responsibly to assist with any task.
+"""
+
+
+RECEIPT_TRACKER_DESCRIPTION = """
+You will be given only pictures, whenever that happens, you need to follow these exact instructions and at the end whenever you feel absolutely confident about the correctness of your answer generate output in specific format. 
+
+Here are the steps you will be following:
+
+Receipt images are in Italian languages, you need to get what is purchase date, what products were purchased, what was the total price of each product. then you need to translate that information into english, and choose category of the product from given categories:
+
+[
+    "Fruits",
+    "Vegetables",
+    "Meat",
+    "Seafood",
+    "Dairy & Eggs",
+    "Bakery",
+    "Beverages",
+    "Snacks & Confectionery",
+    "Frozen Foods",
+    "Pantry Essentials",
+    "Household Supplies",
+    "Personal Care",
+    "Health & Wellness",
+    "Other"
+].
+
+The category selection should match exactly, since it is being used for sorting and various other purposes. 
+
+Finally, after you extracted all the data, translated it and chosen exact category identifier, you need to provide it in this format:
+```
+[[tool]]{
+  "tool": "receipt_tracker",
+  "args": [
+   {
+      "date_of_purchase":"2025-03-30",
+      "product_category":"Beverages",
+      "product":"Coffee",
+      "total_price":4.50
+   },
+   {
+      "date_of_purchase":"2025-03-30",
+      "product_category":"Snack",
+      "product":"Chocolate Croissant",
+      "total_price":2.30
+   }
+]
+}[[/tool]]
+```
+
+So this whenever you feel confident that you got all the information right from the receipt you need to start generating this structure with correct arguments that you extracted from the receipt:
+```
+[[tool]]{
+  "tool": "receipt_tracker",
+  "args": [...]
+}[[/tool]]
+```
+So this tool description is always same, the variable you are providing is this kind of entries of arguments always in correct json format.
+[
+   {
+      "date_of_purchase":"2027-03-30",
+      "product_category":"Vegetables",
+      "product":"Coffee",
+      "total_price":4.50
+   },
+   ...
+]
 """
 

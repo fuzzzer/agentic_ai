@@ -6,25 +6,17 @@ import re
 from typing import Tuple, Optional
 
 from agent.agent_service import AgentService
-from agent.components.description import TOOLS, TOOLS_DESCRIPTION
+from agent.components.description import ANTHROPIC_TOOLS, TOOLS_DESCRIPTION
 from setup_config import API_KEY, REMOTE_MODEL_NAME
+
+logger = logging.getLogger(__name__)
 
 class AgentAnthropicService(AgentService):
     def __init__(self, api_key=API_KEY, model_name=REMOTE_MODEL_NAME, tools_description=TOOLS_DESCRIPTION):
         super().__init__(model_name=model_name, tools_description=tools_description)
         self.client = anthropic.Anthropic(api_key=api_key)
-        self.logger = logging.getLogger(__name__)
-        self.logger.info(f"Initialized AgentAnthropicService with model: {self.model_name}")
-        self.tools = TOOLS
-
-    def _sanitize_tool_response(self, response: str) -> str:
-        """Sanitize tool response to prevent context overflow."""
-        max_length = 5000
-        if len(response) > max_length:
-            response = response[:max_length] + f" [Output truncated, total length: {len(response)} characters]"
-        # Remove ANSI escape codes that may cause display issues
-        ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
-        return ansi_escape.sub('', response)
+       
+        self.tools = ANTHROPIC_TOOLS
 
     def _prepare_request(self):
         """
@@ -37,9 +29,6 @@ class AgentAnthropicService(AgentService):
             self.tools_description
         )
 
-        print('history length', len(self.conversation_history))
-
-
         messages = []
         for msg in self.conversation_history:
             if msg["role"] == "system":
@@ -51,22 +40,17 @@ class AgentAnthropicService(AgentService):
             "system": system_message,
             "messages": messages
         }
-        self.logger.debug(f"Prepared request data: {request_data}")
+        logger.debug(f"Prepared request data: {request_data}")
         return request_data
 
     def _stream_until_tool_or_end(self, request_data) -> Tuple[str, Optional[str]]:
         """
-        Streams the response from Claude while detecting and extracting tool calls.
-        Returns a tuple of (assistant_response, tool_command_json_string).
-        
-        This implementation follows Anthropic’s guidelines (Clause 3.7) by correctly
-        parsing tool use responses as they stream.
+        Streams the response from Anthropic API
         """
         full_text = ""
-        full_tool_str = ""
+        full_tool_call_str = ""
         collecting_tool_use = False
         stop_reason = ""
-
 
         print("🤖 Assistant:", end="", flush=True)       
 
@@ -91,13 +75,13 @@ class AgentAnthropicService(AgentService):
                     print(text_chunk, end="", flush=True)
                     full_text += text_chunk
                 
-                tool_command_chunk = getattr(delta, "partial_json", None)
-                if tool_command_chunk:
+                tool_call_chunk = getattr(delta, "partial_json", None)
+                if tool_call_chunk:
                     if not collecting_tool_use:
                         print() # adding new line before tool use print
                         collecting_tool_use = True
-                    print(tool_command_chunk, end="", flush=True)
-                    full_tool_str += tool_command_chunk
+                    print(tool_call_chunk, end="", flush=True)
+                    full_tool_call_str += tool_call_chunk
 
                 if getattr(chunk, "stop_reason", None):
                     stop_reason = getattr(chunk, "stop_reason", None)
@@ -109,14 +93,14 @@ class AgentAnthropicService(AgentService):
             print()  # New line after streaming completes.
 
             # If tool use data was collected, format it as a tool command.
-            if collecting_tool_use and full_tool_str:
+            if collecting_tool_use and full_tool_call_str:
                 try:
-                    parsed_tool = json.loads(full_tool_str)
+                    parsed_tool = json.loads(full_tool_call_str)
                     tool_as_key = list(parsed_tool.keys())[0]
                     args = parsed_tool[tool_as_key]
 
                     if tool_as_key == "command":
-                        full_tool_str = json.dumps({
+                        full_tool_call_str = json.dumps({
                             "tool": "command",
                             "args": {
                                 "command": args,
@@ -124,18 +108,18 @@ class AgentAnthropicService(AgentService):
                             }
                         })
                     else:
-                        full_tool_str = json.dumps({
+                        full_tool_call_str = json.dumps({
                             "tool": tool_as_key,
                             "args": args
                         })
 
-                    self.logger.info(f"Tool detected: {full_tool_str}")
-                    return full_text, full_tool_str
+                    logger.info(f"Tool detected: {full_tool_call_str}")
+                    return full_text, full_tool_call_str
                 except json.JSONDecodeError as e:
-                    self.logger.error(f"Error parsing tool input: {e}")
+                    logger.error(f"Error parsing tool input: {e}")
 
         except Exception as e:
-            self.logger.error(f"Error during chat completion: {e}")
+            logger.error(f"Error during chat completion: {e}")
             print(f" (Error fetching model output: {e}) ")
             return f"(Model Error: {e})", None
 
@@ -164,7 +148,7 @@ class AgentAnthropicService(AgentService):
 
             # Process the tool call.
             try:
-                self.logger.info(f"Processing tool command: {tool_command}")
+                logger.info(f"Processing tool command: {tool_command}")
                 tool_result = self._process_tool_command(tool_command, user_role)
                 sanitized_result = self._sanitize_tool_response(tool_result)
 
@@ -179,7 +163,7 @@ class AgentAnthropicService(AgentService):
 
             except Exception as e:
                 error_msg = f"Error processing tool command: {e}"
-                self.logger.error(error_msg)
+                logger.error(error_msg)
                 self.conversation_history.append({
                     "role": "user",
                     "content": f"Tool execution error: {error_msg}"
@@ -187,7 +171,7 @@ class AgentAnthropicService(AgentService):
                 break  # Stop processing on error.
 
         if iterations >= max_iterations:
-            self.logger.warning("Reached maximum number of tool use iterations")
+            logger.warning("Reached maximum number of tool use iterations")
 
-        self.logger.info(f"Returning final answer from chat_with_model: {last_answer}")
+        logger.info(f"Returning final answer from chat_with_model: {last_answer}")
         return last_answer

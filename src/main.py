@@ -21,7 +21,7 @@ user_role = ADMIN_USER_ROLE if len(sys.argv) > 2 and sys.argv[2] == ADMIN_USER_R
 if __name__ == "__main__":
     logger = setup_logger()
     
-    agent_openai_service = AgentAnthropicService()
+    agent_openai_service = AgentOpenAIService()
     while True:
         user_input = input("You: ")
         if user_input.lower() in ["exit", "quit"]:
