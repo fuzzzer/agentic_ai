@@ -8,7 +8,7 @@ class ToolCompletionStatus(Enum):
     FAILURE = 2
 
 
-def receit_tracker(
+def receipt_tracker(
     entries: list[dict],
 ) -> ToolCompletionStatus:
     try:
@@ -44,6 +44,7 @@ def append_entries_to_existing_excel(
           "total_price": 4.50
       }
     """
+    print("print: ", entries)
     excel_path: str = "/Users/fuzzzer/programming/AI_tools/agentic_ai/storage/test.xlsx"
 
     if not os.path.exists(excel_path):
@@ -85,5 +86,3 @@ entries = [
         "total_price": 2.30,
     },
 ]
-
-append_entries_to_existing_excel(entries)

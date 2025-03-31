@@ -133,11 +133,31 @@ class AgentAnthropicService(AgentService):
 
         return full_text, None
 
-    def chat_with_model(self, user_input: str, user_role: str) -> str:
+    def chat_with_model(
+        self,
+        user_input: str | None = None,
+        user_input_image: str | None = None,
+        user_role: str = "user"
+    ) -> str:
         """
         Enhanced version that properly handles iterative tool usage with the Claude API.
         """
-        self.conversation_history.append({"role": "user", "content": user_input})
+        if user_input:
+            self.conversation_history.append({"role": "user", "content": user_input})
+
+        if user_input_image:
+            self.conversation_history.append({
+               "role":"user",
+               "content":[
+                  {
+                     "type":"image_url",
+                     "image_url":{
+                        "url":"f""data:image/png;base64,{user_input_image}"
+                     }
+                  }
+               ]
+            })
+       
         last_answer = ""
         max_iterations = 20  # Prevent infinite loops.
         iterations = 0

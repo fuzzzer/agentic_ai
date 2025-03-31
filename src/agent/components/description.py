@@ -220,7 +220,8 @@ The category selection should match exactly, since it is being used for sorting 
 
 Finally, after you extracted all the data, translated it and chosen exact category identifier, you need to provide it in this format:
 ```
-[[tool]]{
+[[tool]]
+{
   "tool": "receipt_tracker",
   "args": [
    {
@@ -235,8 +236,9 @@ Finally, after you extracted all the data, translated it and chosen exact catego
       "product":"Chocolate Croissant",
       "total_price":2.30
    }
-]
-}[[/tool]]
+  ]
+}
+[[/tool]]
 ```
 
 So this whenever you feel confident that you got all the information right from the receipt you need to start generating this structure with correct arguments that you extracted from the receipt:

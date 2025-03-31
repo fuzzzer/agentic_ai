@@ -1,6 +1,4 @@
-import abc
 import json
-import logging
 from venv import logger
 
 from agent.agent_service import AgentService
@@ -9,7 +7,6 @@ from agent.components.tool_manager import execute_tool
 from setup_config import API_BASE_URL, API_KEY, MODEL_NAME
 
 from openai import OpenAI
-
 
 class AgentOpenAIService(AgentService):
     def __init__(
@@ -46,11 +43,9 @@ class AgentOpenAIService(AgentService):
                 model=self.model_name,
                 messages=messages,
                 stream=True,
-                tools=self.tools,
+                # tools=self.tools,
                 stop=[self.END_TOOL_IDENTIFIER],
             )
-
-            print("print 1")
 
             for chunk in response:
                 delta = getattr(chunk.choices[0], "delta", None)
@@ -110,11 +105,28 @@ class AgentOpenAIService(AgentService):
 
         return full_text, full_tool_call_str
 
-    def chat_with_model(self, user_input: str, user_role: str) -> str:
+    def chat_with_model(
+        self,
+        user_input: str | None = None,
+        user_input_image: str | None = None,
+        user_role: str = "user"
+    ) -> str:
         """
         Enhanced version that properly handles iterative tool usage with the Claude API.
         """
-        self.conversation_history.append({"role": "user", "content": user_input})
+        if user_input:
+            self.conversation_history.append({"role": "user", "content": user_input})
+
+        if user_input_image:
+            self.conversation_history.append({
+                "role": "user",
+                "content": [{
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/png;base64,{user_input_image}"
+                        }
+                    }]
+            })
         last_answer = ""
         max_iterations = 1
         iterations = 0
@@ -122,6 +134,7 @@ class AgentOpenAIService(AgentService):
         while iterations < max_iterations:
             iterations += 1
             request_data = self._prepare_request()
+
             answer, tool_command = self._stream_until_tool_or_end(request_data)
 
             if answer and answer.strip():
@@ -156,7 +169,7 @@ class AgentOpenAIService(AgentService):
                 break  # Stop processing on error.
 
         if iterations >= max_iterations:
-            logger.warning("Reached maximum number of tool use iterations")
+            logger.warning("Reached maximum number of tool use iterations")        
 
         logger.info(f"Returning final answer from chat_with_model: {last_answer}")
-        return last_answer
+        return f"{last_answer} | {tool_command or ''}"
