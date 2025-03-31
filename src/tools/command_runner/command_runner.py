@@ -4,7 +4,7 @@ import subprocess
 import shlex
 import re
 from typing import Dict, List, Any, Optional
-from core.config import ALLOWED_OS_COMMANDS, DOCKER_ALLOWED_OS_COMMANDS, DOCKER_FORBIDDEN_COMMANDS, DOCKER_FORBIDDEN_PATTERNS, DOCKER_PERMITTED_OS_DIRECTORIES, PERMITTED_OS_DIRECTORIES, FORBIDDEN_COMMANDS, FORBIDDEN_PATTERNS
+from core.config import DOCKER_ALLOWED_OS_COMMANDS, DOCKER_FORBIDDEN_COMMANDS, DOCKER_FORBIDDEN_PATTERNS, DOCKER_PERMITTED_OS_DIRECTORIES, PERMITTED_OS_DIRECTORIES, FORBIDDEN_COMMANDS, FORBIDDEN_PATTERNS
 
 
 import logging
@@ -29,12 +29,13 @@ class CommandSession:
         """Start the subprocess with pipes for stdout, stderr, stdin."""
         logger.info(f"Starting subprocess: '{self.command}' in '{self.working_dir}'")
         self.process = subprocess.Popen(
-            shlex.split(self.command),
+            self.command,
             cwd=self.working_dir,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             stdin=subprocess.PIPE,
-            text=True
+            text=True,
+            shell=True 
         )
 
     def write_input(self, input_data: str):
@@ -189,14 +190,14 @@ class CommandRunner:
         try:
             logger.info("Spawning subprocess...")
             process = subprocess.Popen(
-                shlex.split(command),
+                command,
                 cwd=working_dir,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                stdin=subprocess.PIPE if interactive_responses else None,
-                text=True
+                stdin=subprocess.PIPE,
+                text=True,
+                shell=True 
             )
-            
             if interactive_responses:
                 logger.info("Sending interactive responses to subprocess.")
                 input_data = "\n".join(interactive_responses) + "\n"
