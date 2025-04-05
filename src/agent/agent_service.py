@@ -105,15 +105,10 @@ class AgentService(abc.ABC):
         Since Model API stops generation when the END_TOOL_IDENTIFIER is generated,
         the final prompt should contain text up to but not including that marker.
         """
-        print()
-        print("print full text: ", full_text)
-        print()
         if self.START_TOOL_IDENTIFIER in full_text:
             parts = full_text.split(self.START_TOOL_IDENTIFIER, 1)
             final_text = parts[0]
             tool_command_str = parts[1].strip()
-            print("print final_text: ", final_text)
-            print("print tool_command_str: ", tool_command_str)
             return final_text, tool_command_str
         return full_text, None
 

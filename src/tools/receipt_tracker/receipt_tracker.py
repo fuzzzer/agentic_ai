@@ -33,6 +33,7 @@ def append_entries_to_existing_excel(
     Each entry in `entries` should be a dict with keys:
       - "date_of_purchase": str (YYYY-MM-DD)
       - "product_category": str
+      - "store": str
       - "product": str
       - "total_price": float
 
@@ -40,6 +41,7 @@ def append_entries_to_existing_excel(
       {
           "date_of_purchase": "2025-03-30",
           "product_category": "Beverage",
+          "store": "Carrefour",
           "product": "Coffee",
           "total_price": 4.50
       }
@@ -52,10 +54,11 @@ def append_entries_to_existing_excel(
 
     df_existing = pd.read_excel(excel_path)
     required_columns = [
-        "Date of Purchase",
-        "Product Category",
+        "Date",
+        "Store",
+        "Category",
         "Product",
-        "Total Price",
+        "Price",
     ]
 
     for col in required_columns:
@@ -63,7 +66,7 @@ def append_entries_to_existing_excel(
             raise ValueError(f"Expected column '{col}' not found in Excel file.")
 
     df_new = pd.DataFrame(entries)
-    df_new = df_new[["date_of_purchase", "product_category", "product", "total_price"]]
+    df_new = df_new[["date_of_purchase", "store", "product_category", "product", "total_price"]]
     df_new.columns = required_columns
     df_combined = pd.concat([df_existing, df_new], ignore_index=True)
     df_combined.to_excel(excel_path, index=False)
@@ -77,12 +80,14 @@ entries = [
         "date_of_purchase": "2025-03-30",
         "product_category": "Beverage",
         "product": "Coffee",
+        "store": "Coffee",
         "total_price": 4.50,
     },
     {
         "date_of_purchase": "2025-03-30",
         "product_category": "Snack",
         "product": "Chocolate Croissant",
+        "store": "Chocolate Croissant",
         "total_price": 2.30,
     },
 ]

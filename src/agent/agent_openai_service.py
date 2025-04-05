@@ -110,7 +110,7 @@ class AgentOpenAIService(AgentService):
         user_input: str | None = None,
         user_input_image: str | None = None,
         user_role: str = "user"
-    ) -> str:
+    ) -> tuple[str, str | None]:
         """
         Enhanced version that properly handles iterative tool usage with the Claude API.
         """
@@ -172,4 +172,5 @@ class AgentOpenAIService(AgentService):
             logger.warning("Reached maximum number of tool use iterations")        
 
         logger.info(f"Returning final answer from chat_with_model: {last_answer}")
-        return f"{last_answer} | {tool_command or ''}"
+        return last_answer, tool_command
+ 

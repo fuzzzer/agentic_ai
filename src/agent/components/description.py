@@ -197,24 +197,42 @@ You will be given only pictures, whenever that happens, you need to follow these
 
 Here are the steps you will be following:
 
-Receipt images are in Italian languages, you need to get what is purchase date, what products were purchased, what was the total price of each product. then you need to translate that information into english, and choose category of the product from given categories:
+Receipt images are in Italian languages, you need to get what is purchase date, in what store, what products were purchased, what was the total price of each product. then you need to translate that information into english, and choose category of the product from given categories:
 
 [
-    "Fruits",
-    "Vegetables",
-    "Meat",
-    "Seafood",
-    "Dairy & Eggs",
-    "Bakery",
-    "Beverages",
-    "Snacks & Confectionery",
-    "Frozen Foods",
-    "Pantry Essentials",
-    "Household Supplies",
     "Personal Care",
-    "Health & Wellness",
-    "Other"
-].
+    "Cooking Oils",
+    "Sauces",
+    "Beverages",
+    "Sweets & Desserts",
+    "Milk",
+    "Dairy",
+    "Meat",
+    "Bakery",
+    "Pet Supplies",
+    "Vegetables",
+    "Fruits",
+    "Eggs",
+    "Uncategorized",
+    "Snack Foods",
+    "Dry Pasta & Noodles",
+    "Grains & Cereals",
+    "Canned & Jarred Fish",
+    "Baking Essentials",
+    "Nut Butters",
+    "Sweeteners & Honey",
+    "Spices & Seasonings",
+    "Household Supplies",
+    "Nuts & Seeds"
+]
+
+also for consistency is following stores are used use these keys:
+
+[
+    "Carrefour",
+    "Lidl",
+    "Viaggator"
+]
 
 The category selection should match exactly, since it is being used for sorting and various other purposes. 
 
@@ -227,12 +245,21 @@ Finally, after you extracted all the data, translated it and chosen exact catego
    {
       "date_of_purchase":"2025-03-30",
       "product_category":"Beverages",
+      "store":"Carrefour",
       "product":"Coffee",
       "total_price":4.50
    },
    {
       "date_of_purchase":"2025-03-30",
       "product_category":"Snack",
+      "store":"Lidl",
+      "product":"Chocolate Croissant",
+      "total_price":2.30
+   },
+   {
+      "date_of_purchase":"2025-03-30",
+      "product_category":"Snack",
+      "store":"Viaggator",
       "product":"Chocolate Croissant",
       "total_price":2.30
    }
@@ -258,4 +285,47 @@ So this tool description is always same, the variable you are providing is this 
    },
    ...
 ]
+"""
+
+
+RECEIPT_TRACKER_CORRECTER_DESCRIPTION = """
+You will be given some texts to check if they are in correct format, whenever that happens, you need to check that that text you need to get what contains purchase date, in what store, what products were purchased, what was the total price of each product and category
+
+You need to generate tool usage code out of it, Your response needs to be in exact format:
+[[tool]]
+{
+  "tool": "receipt_tracker",
+  "args": [
+   {
+      "date_of_purchase":"2025-03-30",
+      "product_category":"Beverages",
+      "store":"Carrefour",
+      "product":"Coffee",
+      "total_price":4.50
+   },
+   {
+      "date_of_purchase":"2025-03-30",
+      "product_category":"Snack",
+      "store":"Lidl",
+      "product":"Chocolate Croissant",
+      "total_price":2.30
+   },
+   {
+      "date_of_purchase":"2025-03-30",
+      "product_category":"Snack",
+      "store":"Viaggator",
+      "product":"Chocolate Croissant",
+      "total_price":2.30
+   }
+  ]
+}
+[[/tool]]
+
+[[tool]]{
+  "tool": "receipt_tracker",
+  "args": [...]
+}[[/tool]]
+
+
+Your primary purpose is to generate tool commands
 """
