@@ -128,7 +128,7 @@ class AgentOpenAIService(AgentService):
                     }]
             })
         last_answer = ""
-        max_iterations = 1
+        max_iterations = 10
         iterations = 0
 
         while iterations < max_iterations:
